@@ -1,0 +1,230 @@
+//: Playground - noun: a place where people can play
+
+import UIKit
+
+class Student {
+    var name:String?
+    var surname:String?
+    var age:Int?
+    var phone:String?
+    var address:String?
+    var email:String?
+    
+    convenience init(name: String?=nil,surname:String?=nil,age:Int?=nil,phone:String?=nil,address:String?,email:String?=nil) {
+        self.init()
+        self.name=name
+        self.surname=surname
+        self.age=age
+        self.phone=phone
+        self.address=address
+        self.email=email
+    }
+}
+enum TeacherType{
+    case intern
+    case extern
+}
+
+class Teacher{
+    var name:String?
+    var surname:String?
+    var age:Int?
+    var email:String?
+    var type:TeacherType?
+    
+    convenience init(name: String?=nil,surname:String?=nil,age:Int?=nil,email:String?=nil,type:TeacherType?=nil) {
+        self.init()
+        self.name=name
+        self.surname=surname
+        self.age=age
+        self.email=email
+        self.type=type
+    }
+}
+
+class Subject{
+    var name:String?
+    var year:Date?
+    var teachers:[Teacher]?
+    var students:[Student]?
+    
+    convenience init(name: String?=nil,year:Date?=nil,teachers:[Teacher]?=nil,students:[Student]?=nil) {
+        self.init()
+        self.name=name
+        self.teachers=teachers
+        self.students=students
+        self.year=year
+    }
+    
+}
+
+
+
+//students
+let stdnt = [Student(name: "mic",
+                     surname: "pardo",
+                     age: 18,
+                     phone: "653503652",
+                     address: "calle fina",
+                     email: "hola@gmail.com"),
+             Student(name: "yinyo",
+                     surname: "casado",
+                     age: 20,
+                     phone: "837267856",
+                     address: "por ahi",
+                     email: "hola2@gmail.com"),
+             Student(name: "cactus",
+                     surname:"telepatico" ,
+                     age: 18,
+                     phone: "746357834",
+                     address: "calle fina2",
+                     email: "hola3@gmail.com"),
+             Student(name: "fuet",
+                     surname: "caro",
+                     age: 18,
+                     phone: "327654623",
+                     address: "calle fina3",
+                     email: "hola4@gmail.com"),
+             Student(name: "alfredu",
+                     surname: "chini",
+                     age: 18, phone: "2375883632",
+                     address: "calle fina4",
+                     email: "hola5@gmail.com")]
+
+//teachers
+let tchr = [Teacher(name: "pedro",
+                    surname: "camacho",
+                    age: 34,
+                    email: "email1@gmail.com",
+                    type: .intern),
+            Teacher(name: "jaime",
+                    surname: "no se", age: 36,
+                    email: "email2@gmail.com",
+                    type: .extern),
+            Teacher(name: "david",
+                    surname: "jardon creo", age: 25,
+                    email: "email3@gmail.com",
+                    type: .intern),
+            Teacher(name: "sergio",
+                    surname: "redondo",
+                    age: 12,
+                    email: "email5@gmail.com",
+                    type: .intern),
+            Teacher(name: "meri",
+                    surname: "camacho",
+                    age: 33,
+                    email: "email5@gmail.com",
+                    type: .extern)]
+
+//subjects
+let sbjcts = [Subject(name: "db",
+                      year: Calendar.current.date(from: DateComponents(year: 2018, month: 02, day: 15)),
+                                                  teachers: tchr.filter {$0.name?.contains("u") ?? false},
+                                                  students: stdnt.filter {$0.name?.contains("a") ?? false}),
+              Subject(name: "prog",
+                      year: Calendar.current.date(from: DateComponents( year: 2019, month: 09, day: 19)),
+                                                  teachers: tchr.filter {$0.name?.contains("o") ?? false},
+                                                  students: stdnt.filter {$0.name?.contains("e") ?? false}),
+              Subject(name: "IOS",
+                      year: Calendar.current.date(from: DateComponents( year: 2017, month: 01, day: 20)),
+                                                  teachers: tchr.filter {$0.name?.contains("i") ?? false},
+                                                  students: stdnt.filter {$0.name?.contains("i") ?? false}),
+              Subject(name: "fol",
+                      year: Calendar.current.date(from: DateComponents( year: 2018, month: 12, day: 28)),
+                                                  teachers: tchr.filter {$0.name?.contains("e") ?? false},
+                                                  students: stdnt.filter {$0.name?.contains("o") ?? false}),
+              Subject(name: "lenguaje de marcas",
+                      year: Calendar.current.date(from: DateComponents( year: 2015, month: 08, day: 30)),
+                                                  teachers: tchr.filter {$0.name?.contains("a") ?? false},
+                                                  students: stdnt.filter {$0.name?.contains("u") ?? false})]
+
+//-----------------------------------------
+//task 1
+
+//student name
+stdnt.forEach{stdnt in
+    guard let studentName=stdnt.name else {
+        return
+    }
+    print("Student name: \(studentName)")
+    
+    //student subject count
+    let studentSubjects=sbjcts.filter{$0.students?.contains(where: {studentSubject in
+        guard let studentSubjectName = studentSubject.name else{
+            return false
+        }
+        return studentSubjectName.compare(studentName) == .orderedSame
+    }) ?? false}
+    print("Student subjects count: \(studentSubjects.count)")
+    
+    //Student subject name
+    print("Student Subjects name: \(studentSubjects.compactMap{$0.name})")
+    print()
+}
+//-----------------------------------------
+//task 2
+
+//number and name of students that have more than one subject
+let studentsSeveralNames: [String] = stdnt.compactMap{iter in
+    let studentSubjects = sbjcts.filter{$0.students?.contains(where: {$0.name == iter.name}) ?? false}
+    return (studentSubjects.count>1 ? iter.name:nil)
+}
+print(studentsSeveralNames.count)
+print(studentsSeveralNames)
+
+//number and name of teachers that have more than one subject
+let teachersSeveralNames:[String] = tchr.compactMap{iter in
+    let teacherSubjects = sbjcts.filter{$0.students?.contains(where: {$0.name == iter.name}) ?? false}
+    return (teacherSubjects.count > 1 ? iter.name:nil)
+}
+print(teachersSeveralNames.count)
+print(teachersSeveralNames)
+
+//number and name of teachers (intern an extern)
+let teachersIntern = tchr.filter{$0.type == .intern}
+print("teachersIntern: \(teachersIntern)")
+print("teachersIntern count: \(teachersIntern.count)")
+
+let teachersExtern = tchr.filter{$0.type == .extern}
+print("teachersIntern: \(teachersExtern)")
+print("teachersIntern count: \(teachersExtern.count)")
+
+//sort student age
+let studentAge = stdnt.sorted {$0.age ?? 0 < $1.age ?? 0}
+let teacherAge = tchr.sorted {$0.age ?? 0 < $1.age ?? 0}
+print(studentAge.compactMap{$0.name})
+print(teacherAge.compactMap{$0.name})
+
+//sort subject date
+let subjectSorted = sbjcts.sorted { actual, next in
+    guard let actualYear = actual.year,
+        let nextYear = next.year else{
+            return true
+    }
+    return actualYear.compare(nextYear) == .orderedAscending
+}
+print(subjectSorted.compactMap{$0.name})
+
+//subject name and format date
+let subjectDateFormatted = DateFormatter()
+subjectDateFormatted.locale = Locale(identifier: "es_ES")
+subjectDateFormatted.dateFormat = "eeee dd 'de' MMMM 'de' yyyy"
+
+sbjcts.forEach{ iter in
+    guard let subjectName = iter.name,
+          let subjectDate = iter.year else{
+        return
+    }
+    print("Subject name: \(subjectName)")
+    print("Subject date: \(subjectDateFormatted.string(from: subjectDate))")
+    print()
+}
+
+
+
+
+
+
+
+
+
